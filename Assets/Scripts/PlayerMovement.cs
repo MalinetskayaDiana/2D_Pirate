@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         horizontalMove = Input.GetAxis("Horizontal") * runSpeed;
-        //animator.SetFloat("speed", Mathf.Abs(horizontalMove));
+        animator.SetFloat("speed", Mathf.Abs(horizontalMove));
 
         if (horizontalMove < 0 && FacingRight)
         {
@@ -41,8 +41,17 @@ public class PlayerMovement : MonoBehaviour
         if (isGround && Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
-
         }
+
+        if (isGround == false)
+        {
+            animator.SetBool("jump", true);
+        }
+        else
+        {
+            animator.SetBool("jump", false);
+        }
+
     }
 
     void FixedUpdate()
@@ -75,6 +84,18 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.name == "DeadZone")
         {
             transform.position = new Vector3(sX, sY, transform.position.z);
+        }
+
+        if (collision.gameObject.tag =="Platform")
+        {
+            this.transform.parent = collision.transform;
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Platform")
+        {
+            this.transform.parent = null;
         }
     }
 }
