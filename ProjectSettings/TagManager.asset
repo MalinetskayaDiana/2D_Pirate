@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Platform
+  - Checkpoint
+  - Enemy
   layers:
   - Default
   - TransparentFX

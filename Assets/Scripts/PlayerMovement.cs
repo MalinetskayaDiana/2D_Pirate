@@ -16,6 +16,9 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 5f;
     [Range(-5f, 5f)] public float checkGroundOffSetY = -1.8f;
     [Range(0, 5f)] public float checkGroundRadius = 0.3f;
+    [Header("Sound Settings")]
+    public AudioSource JimpSound;
+    public AudioSource GameOverSound;
 
     void Start()
     {
@@ -41,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGround && Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+            JimpSound.Play();
         }
 
         if (isGround == false)
@@ -83,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.name == "DeadZone")
         {
+            GameOverSound.Play();
             transform.position = new Vector3(sX, sY, transform.position.z);
         }
 
@@ -90,12 +95,32 @@ public class PlayerMovement : MonoBehaviour
         {
             this.transform.parent = collision.transform;
         }
+
+        if (collision.gameObject.tag == "Checkpoint")
+        {
+            sX = transform.position.x;
+            sY = transform.position.y;
+            Destroy(collision.gameObject);
+        }
+
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Destroy(gameObject);
+        }
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Platform")
         {
             this.transform.parent = null;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Destroy(collision.gameObject);
         }
     }
 }
