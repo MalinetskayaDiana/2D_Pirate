@@ -103,10 +103,10 @@ public class PlayerMovement : MonoBehaviour
             Destroy(collision.gameObject);
         }
 
-        if (collision.gameObject.tag == "Enemy")
+        /*if (collision.gameObject.tag == "Enemy")
         {
             Destroy(gameObject);
-        }
+        }*/
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
