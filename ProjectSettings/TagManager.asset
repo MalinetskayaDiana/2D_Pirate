@@ -9,6 +9,10 @@ TagManager:
   - Enemy
   - Bullet
   - Ground
+  - JumpBonus
+  - SilverCoin
+  - GoldenCoin
+  - HealthBonus
   layers:
   - Default
   - TransparentFX

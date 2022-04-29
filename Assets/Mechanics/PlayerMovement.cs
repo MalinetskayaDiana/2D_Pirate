@@ -6,6 +6,8 @@ public class PlayerMovement : MonoBehaviour
 {
     public Animator animator;
 
+    public int silverCoin, goldenCoin;
+
     float sX, sY;
     private Rigidbody2D rb;
     float horizontalMove = 0f;
@@ -14,17 +16,25 @@ public class PlayerMovement : MonoBehaviour
     [Header("Player Movement Settings")]
     public float runSpeed = 7f;
     public float jumpForce = 5f;
+    public float jumpForceStart;
+    public float jumpForceBonus;
+    public float jumpBonusTime;
+    public float jumpBonusTimeMax;
     [Range(-5f, 5f)] public float checkGroundOffSetY = -1.8f;
     [Range(0, 5f)] public float checkGroundRadius = 0.3f;
     [Header("Sound Settings")]
     public AudioSource JimpSound;
     public AudioSource GameOverSound;
+    public AudioSource CoinsSound;
+    public AudioSource CheckpointSound;
+    public AudioSource PotionsSound;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         sX = transform.position.x;
         sY = transform.position.y;
+        jumpForceStart = jumpForce;
     }
 
     void Update()
@@ -63,6 +73,16 @@ public class PlayerMovement : MonoBehaviour
         Vector2 targetVelocity = new Vector2(horizontalMove * 10f, rb.velocity.y);
         rb.velocity = targetVelocity;
         CheckGround();
+
+        if (jumpBonusTime > 0)
+        {
+            jumpForce = jumpForceBonus;
+            jumpBonusTime--;
+        }
+        else
+        {
+            jumpForce = jumpForceStart;
+        }
     }
     private void Flip()
     {
@@ -83,6 +103,12 @@ public class PlayerMovement : MonoBehaviour
             isGround = false;
         }
     }
+
+    private void JumpBonus()
+    {
+        jumpBonusTime = jumpBonusTimeMax;
+
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.name == "DeadZone")
@@ -96,10 +122,23 @@ public class PlayerMovement : MonoBehaviour
             this.transform.parent = collision.transform;
         }
 
+        if (collision.gameObject.tag == "HealthBonus")
+        {
+            PotionsSound.Play();
+        }
+
         if (collision.gameObject.tag == "Checkpoint")
         {
+            CheckpointSound.Play();
             sX = transform.position.x;
             sY = transform.position.y;
+            Destroy(collision.gameObject);
+        }
+
+        if (collision.gameObject.tag == "JumpBonus")
+        {
+            PotionsSound.Play();
+            JumpBonus();
             Destroy(collision.gameObject);
         }
 
@@ -120,6 +159,20 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
+            Destroy(collision.gameObject);
+        }
+
+        if (collision.tag == "SilverCoin")
+        {
+            CoinsSound.Play();
+            silverCoin++;
+            Destroy(collision.gameObject);
+        }
+
+        if (collision.tag == "GoldenCoin")
+        {
+            CoinsSound.Play();
+            goldenCoin++;
             Destroy(collision.gameObject);
         }
     }
