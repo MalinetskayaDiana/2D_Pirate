@@ -9,9 +9,14 @@ public class MenuOptions : MonoBehaviour
     public bool menuOptions;
     public GameObject options;
     public AudioMixer audioMixer;
+    public AudioSource buttonSetSound;
+    public AudioSource buttonSound;
+    public AudioSource buttonVolumeSound;
+    public AudioSource buttonTirListSound;
 
     public void Resume()
     {
+        buttonSetSound.Play();
         options.SetActive(false);
         Time.timeScale = 1f;
         menuOptions = false;
@@ -19,6 +24,7 @@ public class MenuOptions : MonoBehaviour
 
     public void Settings()
     {
+        buttonSound.Play();
         options.SetActive(true);
         Time.timeScale = 0f;
         menuOptions = true;
@@ -32,10 +38,12 @@ public class MenuOptions : MonoBehaviour
     public void Sound()
     {
         AudioListener.pause = !AudioListener.pause;
+        buttonVolumeSound.Play();
     }
 
     public void SetQuality(int qualityIndex)
     {
         QualitySettings.SetQualityLevel(qualityIndex);
+        buttonTirListSound.Play();
     }
 }

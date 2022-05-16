@@ -10,9 +10,13 @@ public class PlayerMovement : MonoBehaviour
 
     float sX, sY;
     private Rigidbody2D rb;
+    [SerializeField] private float iFlamesDuration;
+    [SerializeField] private int numberOfFlashes;
+    private SpriteRenderer spriteRend;
     float horizontalMove = 0f;
     private bool FacingRight = true;
     public bool isGround = false;
+    public bool isBonusJump = false;
     [Header("Player Movement Settings")]
     public float runSpeed = 7f;
     public float jumpForce = 5f;
@@ -28,9 +32,16 @@ public class PlayerMovement : MonoBehaviour
     public AudioSource CoinsSound;
     public AudioSource CheckpointSound;
     public AudioSource PotionsSound;
+    [Header("Effects Settings")]
+    public GameObject jumpPosionEffect;
+    public GameObject healthPosionEffect;
+    public GameObject checkpointEffect;
+    public GameObject goldCoinEffect;
+    public GameObject silverCoinEffect;
 
     void Start()
     {
+        spriteRend = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         sX = transform.position.x;
         sY = transform.position.y;
@@ -69,27 +80,31 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void FixedUpdate()
-    {
+    { 
         Vector2 targetVelocity = new Vector2(horizontalMove * 10f, rb.velocity.y);
         rb.velocity = targetVelocity;
         CheckGround();
 
         if (jumpBonusTime > 0)
         {
+            Physics2D.IgnoreLayerCollision(6, 8, true);
+            isBonusJump = true;
+            spriteRend.color = new Color(0.15f, 0.95f, 0.25f, 0.8f);
             jumpForce = jumpForceBonus;
-            jumpBonusTime--;
+            jumpBonusTime -= Time.deltaTime;
         }
         else
         {
+            Physics2D.IgnoreLayerCollision(6, 8, false);
+            spriteRend.color = Color.white;
             jumpForce = jumpForceStart;
+            isBonusJump = false;
         }
     }
     private void Flip()
     {
         FacingRight = !FacingRight;
-        Vector3 tScale = transform.localScale;
-        tScale.x *= -1;
-        transform.localScale = tScale;
+        transform.Rotate(0f, 180f, 0f);
     }
     private void CheckGround()
     {
@@ -107,7 +122,6 @@ public class PlayerMovement : MonoBehaviour
     private void JumpBonus()
     {
         jumpBonusTime = jumpBonusTimeMax;
-
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -124,11 +138,13 @@ public class PlayerMovement : MonoBehaviour
 
         if (collision.gameObject.tag == "HealthBonus")
         {
+            Instantiate(healthPosionEffect, transform.position, Quaternion.identity);
             PotionsSound.Play();
         }
 
         if (collision.gameObject.tag == "Checkpoint")
         {
+            Instantiate(checkpointEffect, transform.position, Quaternion.identity);
             CheckpointSound.Play();
             sX = transform.position.x;
             sY = transform.position.y;
@@ -137,6 +153,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (collision.gameObject.tag == "JumpBonus")
         {
+            Instantiate(jumpPosionEffect, transform.position, Quaternion.identity);
             PotionsSound.Play();
             JumpBonus();
             Destroy(collision.gameObject);
@@ -164,6 +181,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (collision.tag == "SilverCoin")
         {
+            Instantiate(silverCoinEffect, transform.position, Quaternion.identity);
             CoinsSound.Play();
             silverCoin++;
             Destroy(collision.gameObject);
@@ -171,9 +189,21 @@ public class PlayerMovement : MonoBehaviour
 
         if (collision.tag == "GoldenCoin")
         {
+            Instantiate(goldCoinEffect, transform.position, Quaternion.identity);
             CoinsSound.Play();
             goldenCoin++;
             Destroy(collision.gameObject);
         }
     }
+
+    /*private IEnumerator GreenBonusLastTime()
+    {
+        for (int i = 0; i < numberOfFlashes; i++)
+        {
+            spriteRend.color = new Color(0.15f, 0.95f, 0.24f, 0.8f);
+            yield return new WaitForSeconds(iFlamesDuration / (numberOfFlashes * 2));
+            spriteRend.color = Color.white;
+            yield return new WaitForSeconds(iFlamesDuration / (numberOfFlashes * 2));
+        }
+    }*/
 }

@@ -20,13 +20,13 @@ public class ToothMove : MonoBehaviour
         if (transform.position == pos1.position)
         {
             nextPos = pos2.position;
-            transform.localScale = new Vector2(-4, 4);
+            transform.localScale = new Vector2(transform.localScale.x * -1, transform.localScale.y);
         }
 
         if (transform.position == pos2.position)
         {
             nextPos = pos1.position;
-            transform.localScale = new Vector2(4, 4);
+            transform.localScale = new Vector2(transform.localScale.x * -1, transform.localScale.y);
         }
     }
 }

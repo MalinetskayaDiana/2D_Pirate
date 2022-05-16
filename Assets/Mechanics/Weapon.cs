@@ -19,9 +19,8 @@ public class Weapon : MonoBehaviour
             Instantiate(Bullet, shotPosition.transform.position, transform.rotation);
         }
     }
-    /*private void Awake()
+    private void Awake()
     {
         GameObject clone = (GameObject)Instantiate(Bullet, transform.position, Quaternion.identity);
-        Destroy(clone, 1.0f);
-    }*/
+    }
 }
