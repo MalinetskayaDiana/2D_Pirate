@@ -10,20 +10,21 @@ public class PlayerMovement : MonoBehaviour
 
     float sX, sY;
     private Rigidbody2D rb;
-    [SerializeField] private float iFlamesDuration;
-    [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRend;
-    float horizontalMove = 0f;
+    float horizontalMove;
     private bool FacingRight = true;
     public bool isGround = false;
     public bool isBonusJump = false;
+    public bool isWater = false;
     [Header("Player Movement Settings")]
-    public float runSpeed = 7f;
-    public float jumpForce = 5f;
+    public float runSpeed;
+    public float jumpForce;
     public float jumpForceStart;
     public float jumpForceBonus;
     public float jumpBonusTime;
     public float jumpBonusTimeMax;
+    /*public float underWaterTime;
+    public float underWaterTimeMax;*/
     [Range(-5f, 5f)] public float checkGroundOffSetY = -1.8f;
     [Range(0, 5f)] public float checkGroundRadius = 0.3f;
     [Header("Sound Settings")]
@@ -76,7 +77,6 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetBool("jump", false);
         }
-
     }
 
     void FixedUpdate()
@@ -89,17 +89,30 @@ public class PlayerMovement : MonoBehaviour
         {
             Physics2D.IgnoreLayerCollision(6, 8, true);
             isBonusJump = true;
-            spriteRend.color = new Color(0.15f, 0.95f, 0.25f, 0.8f);
+            /*spriteRend.color = new Color(0.15f, 0.95f, 0.25f, 0.8f);*/
             jumpForce = jumpForceBonus;
             jumpBonusTime -= Time.deltaTime;
         }
         else
         {
             Physics2D.IgnoreLayerCollision(6, 8, false);
-            spriteRend.color = Color.white;
+            /*spriteRend.color = new Color(1, 1, 1, 1);*/
             jumpForce = jumpForceStart;
             isBonusJump = false;
         }
+
+        /*if (isWater == true)
+        {
+            if (underWaterTime > 0)
+            {
+                underWaterTime -= Time.deltaTime;
+            }
+            else
+            {
+                GameOverSound.Play();
+                transform.position = new Vector3(sX, sY, transform.position.z);
+            }
+        }*/
     }
     private void Flip()
     {
@@ -123,6 +136,11 @@ public class PlayerMovement : MonoBehaviour
     {
         jumpBonusTime = jumpBonusTimeMax;
     }
+
+    /*private void WaterTime()
+    {
+        underWaterTime = underWaterTimeMax;
+    }*/
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.name == "DeadZone")
@@ -159,9 +177,9 @@ public class PlayerMovement : MonoBehaviour
             Destroy(collision.gameObject);
         }
 
-        /*if (collision.gameObject.tag == "Enemy")
+       /* if (collision.gameObject.tag == "Zone")
         {
-            Destroy(gameObject);
+            WaterTime();
         }*/
     }
     private void OnCollisionExit2D(Collision2D collision)
@@ -194,16 +212,36 @@ public class PlayerMovement : MonoBehaviour
             goldenCoin++;
             Destroy(collision.gameObject);
         }
+
+        if (collision.tag == "Water")
+        {
+            isWater = true;
+
+        }
     }
+
+    /*private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Water")
+        {
+            isWater = false;
+
+        }
+    }*/
+
+    /*private void OnTriggerStay2D(Collider2D collision)
+    {
+        
+    }*/
 
     /*private IEnumerator GreenBonusLastTime()
     {
         for (int i = 0; i < numberOfFlashes; i++)
         {
             spriteRend.color = new Color(0.15f, 0.95f, 0.24f, 0.8f);
-            yield return new WaitForSeconds(iFlamesDuration / (numberOfFlashes * 2));
+            yield return new WaitForSeconds(FlamesDuration / (numberOf_Flashes * 2));
             spriteRend.color = Color.white;
-            yield return new WaitForSeconds(iFlamesDuration / (numberOfFlashes * 2));
+            yield return new WaitForSeconds(FlamesDuration / (numberOf_Flashes * 2));
         }
     }*/
 }

@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+    public Animator animator;
     [SerializeField] public float startHealth;
     [SerializeField] private float iFlamesDuration;
     [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRend;
+    public Color colorFirst;
     public float currentHealth { get; private set; }
-
     public AudioSource Pain;
     private void Awake()
     {
         spriteRend = GetComponent<SpriteRenderer>();
+        colorFirst = spriteRend.color;
         currentHealth = startHealth;
     }
+
     public void TakeHit(float damage)
     {
         currentHealth = Mathf.Clamp(currentHealth - damage, 0, startHealth);
@@ -23,7 +26,8 @@ public class Health : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Destroy(gameObject);
+            animator.SetBool("dead", true);
+            Destroy(gameObject, 1f);
         }
         if (currentHealth > 0)
         {
@@ -46,7 +50,7 @@ public class Health : MonoBehaviour
         {
             spriteRend.color = new Color(1, 0, 0, 0.5f);
             yield return new WaitForSeconds(iFlamesDuration / (numberOfFlashes * 2));
-            spriteRend.color = Color.white;
+            spriteRend.color = colorFirst;
             yield return new WaitForSeconds(iFlamesDuration / (numberOfFlashes * 2));
         }
         Physics2D.IgnoreLayerCollision(6, 7, false);

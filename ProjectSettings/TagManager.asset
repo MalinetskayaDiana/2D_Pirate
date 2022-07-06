@@ -13,6 +13,8 @@ TagManager:
   - SilverCoin
   - GoldenCoin
   - HealthBonus
+  - Water
+  - Zone
   layers:
   - Default
   - TransparentFX
@@ -23,7 +25,7 @@ TagManager:
   - Hero
   - Enemy
   - Bonus
-  - 
+  - DestroyedShip
   - 
   - 
   - 
